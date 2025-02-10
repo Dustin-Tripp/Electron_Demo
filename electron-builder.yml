@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: electron-app
+appId: dustin.system_performance
+productName: system_performance
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: electron-app
+  executableName: system_performance
 nsis:
   artifactName: ${name}.${ext}
   shortcutName: ${productName}

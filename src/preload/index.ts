@@ -12,7 +12,9 @@ const api = {
     ipcRenderer.removeAllListeners('download-progress'),
 
   onUpdateAvailable: (callback: (event: Electron.IpcRendererEvent) => void): Electron.IpcRenderer =>
-    ipcRenderer.on('update-available', callback)
+    ipcRenderer.on('update-available', callback),
+
+  getSystemStats: () => ipcRenderer.invoke('get-system-stats') // ✅ Added here, instead of exposing separately
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -21,7 +23,7 @@ const api = {
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
-    contextBridge.exposeInMainWorld('api', api)
+    contextBridge.exposeInMainWorld('api', api) // ✅ Now includes `getSystemStats`
   } catch (error) {
     console.error(error)
   }

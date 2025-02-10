@@ -1,98 +1,126 @@
-import { useState } from 'react'
-import { Responsive, WidthProvider } from 'react-grid-layout'
-import { useTheme } from '@mui/material'
-import FactCard from './FactCard'
-import DevicesIcon from '@mui/icons-material/Devices'
-import PeopleIcon from '@mui/icons-material/People'
-import SpeedIcon from '@mui/icons-material/Speed'
-import BuildIcon from '@mui/icons-material/Build'
-import 'react-grid-layout/css/styles.css'
-import 'react-resizable/css/styles.css'
+import { useEffect, useState } from 'react';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import { useTheme } from '@mui/material';
+import FactCard from './FactCard';
+import SpeedIcon from '@mui/icons-material/Speed';
+import MemoryIcon from '@mui/icons-material/Memory';
+import StorageIcon from '@mui/icons-material/Storage';
+import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
-const ResponsiveGridLayout = WidthProvider(Responsive)
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const defaultLayouts = {
   lg: [
-    { i: 'dynamicScaling', x: 0, y: 0, w: 3, h: 2, minW: 2 }, // First row - half width
-    { i: 'responsiveDesign', x: 3, y: 0, w: 3, h: 2, minW: 2 }, // First row - half width
-    { i: 'performance', x: 0, y: 2, w: 6, h: 1, minW: 2 }, // Full width but only 1 block tall
-    { i: 'customization', x: 0, y: 3, w: 6, h: 2, minW: 2 }, // Full width and 2 blocks tall
+    { i: 'cpuLoad', x: 0, y: 0, w: 6, h: 1, minW: 2 },
+    { i: 'memoryUsage', x: 0, y: 1, w: 2, h: 2, minW: 2 },
+    { i: 'diskUsage', x: 2, y: 1, w: 2, h: 2, minW: 2 },
+    { i: 'networkUsage', x: 0, y: 3, w: 6, h: 1, minW: 2 }
   ],
   md: [
-    { i: 'dynamicScaling', x: 0, y: 0, w: 2, h: 2, minW: 2 },
-    { i: 'responsiveDesign', x: 2, y: 0, w: 2, h: 2, minW: 2 },
-    { i: 'performance', x: 0, y: 2, w: 4, h: 1, minW: 2 },
-    { i: 'customization', x: 0, y: 3, w: 4, h: 2, minW: 2 },
+    { i: 'cpuLoad', x: 0, y: 0, w: 4, h: 1, minW: 2 },
+    { i: 'memoryUsage', x: 0, y: 1, w: 2, h: 2, minW: 2 },
+    { i: 'diskUsage', x: 2, y: 1, w: 2, h: 2, minW: 2 },
+    { i: 'networkUsage', x: 0, y: 3, w: 4, h: 1, minW: 2 }
   ],
   sm: [
-    { i: 'dynamicScaling', x: 0, y: 0, w: 2, h: 2, minW: 2 },
-    { i: 'responsiveDesign', x: 2, y: 0, w: 2, h: 2, minW: 2 },
-    { i: 'performance', x: 0, y: 2, w: 4, h: 1, minW: 2 },
-    { i: 'customization', x: 0, y: 3, w: 4, h: 2, minW: 2 },
+    { i: 'cpuLoad', x: 0, y: 0, w: 4, h: 1, minW: 2 },
+    { i: 'memoryUsage', x: 0, y: 1, w: 2, h: 2, minW: 2 },
+    { i: 'diskUsage', x: 2, y: 1, w: 2, h: 2, minW: 2 },
+    { i: 'networkUsage', x: 0, y: 3, w: 4, h: 1, minW: 2 }
   ],
   xs: [
-    { i: 'dynamicScaling', x: 0, y: 0, w: 1, h: 2, minW: 1 }, // Each takes full width in XS
-    { i: 'responsiveDesign', x: 0, y: 2, w: 1, h: 2, minW: 1 },
-    { i: 'performance', x: 0, y: 4, w: 1, h: 1, minW: 1 },
-    { i: 'customization', x: 0, y: 5, w: 1, h: 2, minW: 1 },
-  ],
-}
+    { i: 'cpuLoad', x: 0, y: 0, w: 1, h: 1, minW: 1 },
+    { i: 'memoryUsage', x: 0, y: 1, w: 1, h: 2, minW: 1 },
+    { i: 'diskUsage', x: 0, y: 3, w: 1, h: 2, minW: 1 },
+    { i: 'networkUsage', x: 0, y: 5, w: 1, h: 1, minW: 1 }
+  ]
+};
 
 const HomeCards: React.FunctionComponent = () => {
-  const [layouts, setLayouts] = useState(defaultLayouts)
-  const theme = useTheme()
+  const layouts = (defaultLayouts);
+  const theme = useTheme();
+  const [stats, setStats] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await (window as any).api.getSystemStats();
+        setStats(data);
+      } catch (error) {
+        console.error('Error fetching system stats:', error);
+      }
+    };
+
+    fetchStats();
+    const interval = setInterval(fetchStats, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <ResponsiveGridLayout
       className="layout"
       layouts={layouts}
       breakpoints={{ lg: 1600, md: 996, sm: 768, xs: 480 }}
-      cols={{ lg: 6, md: 4, sm: 4, xs: 1 }} // Adjusted to fit new layout
+      cols={{ lg: 6, md: 4, sm: 4, xs: 1 }}
       rowHeight={140}
       isDraggable={true}
       isResizable={true}
     >
-      {/* Dynamic Scaling - Top Left */}
-      <div key="dynamicScaling">
+      {/* CPU Load */}
+      <div key="cpuLoad">
         <FactCard
-          icon={<DevicesIcon fontSize="large" />}
-          title="Dynamic Scaling"
-          fact="Try resizing the app! The layout adjusts dynamically."
+          icon={<SpeedIcon fontSize="large" />}
+          title="CPU Load"
+          fact={stats?.cpu ? `${stats.cpu.currentLoad.toFixed(2)}%` : 'Loading...'}
           backgroundColor={theme.palette.primary.main}
         />
       </div>
 
-      {/* Responsive Design - Top Right */}
-      <div key="responsiveDesign">
+      {/* Memory Usage */}
+      <div key="memoryUsage">
         <FactCard
-          icon={<PeopleIcon fontSize="large" />}
-          title="Responsive Design"
-          fact="Your app works on any screen size, from mobile to desktop."
-          backgroundColor="#00838F" // Teal for contrast
+          icon={<MemoryIcon fontSize="large" />}
+          title="Memory Usage"
+          fact={
+            stats?.memory
+              ? `${((stats.memory.total - stats.memory.free) / stats.memory.total * 100).toFixed(2)}% Used`
+              : 'Loading...'
+          }
+          backgroundColor="#00838F"
         />
       </div>
 
-      {/* Performance Optimization - Full Width, 1 Block Tall */}
-      <div key="performance">
+      {/* Disk Usage */}
+      <div key="diskUsage">
         <FactCard
-          icon={<SpeedIcon fontSize="large" />}
-          title="Performance Optimized"
-          fact="This template is built with efficiency in mind."
-          backgroundColor="#D84315" // Dark orange for an energetic feel
+          icon={<StorageIcon fontSize="large" />}
+          title="Disk Usage"
+          fact={
+            stats?.disk && stats.disk.length > 0
+              ? `${((stats.disk[0].used / stats.disk[0].size) * 100).toFixed(2)}% Used`
+              : 'Loading...'
+          }
+          backgroundColor="#D84315"
         />
       </div>
 
-      {/* Customization - Full Width, 2 Blocks Tall */}
-      <div key="customization">
+      {/* Network Speed */}
+      <div key="networkUsage">
         <FactCard
-          icon={<BuildIcon fontSize="large" />}
-          title="Easily Customizable"
-          fact="Modify themes, layouts, and components with ease."
-          backgroundColor="#6A1B9A" // Dark purple for customization/flexibility
+          icon={<NetworkCheckIcon fontSize="large" />}
+          title="Network Speed"
+          fact={
+            stats?.network
+              ? `${(stats.network[0].rx_bytes / 1024 / 1024).toFixed(2)} MB/s Download`
+              : 'Loading...'
+          }
+          backgroundColor="#6A1B9A"
         />
       </div>
     </ResponsiveGridLayout>
-  )
-}
+  );
+};
 
-export default HomeCards
+export default HomeCards;

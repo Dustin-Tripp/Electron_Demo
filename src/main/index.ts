@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import si from 'systeminformation' // System monitoring
 import { autoUpdater } from 'electron-updater'
 
 function createWindow(): void {
@@ -56,12 +57,23 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  app.commandLine.appendSwitch('disable-features', 'Autofill')
+  app.commandLine.appendSwitch('disable-features', 'AutofillAssistant')
   electronApp.setAppUserModelId('com.electron')
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
   ipcMain.on('ping', () => console.log('pong'))
+
+  ipcMain.handle('get-system-stats', async () => {
+    return {
+      cpu: await si.currentLoad(),
+      memory: await si.mem(),
+      disk: await si.fsSize(),
+      network: await si.networkStats()
+    }
+  })
 
   createWindow()
 

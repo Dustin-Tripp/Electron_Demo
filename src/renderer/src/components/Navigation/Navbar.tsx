@@ -1,16 +1,16 @@
-import * as React from 'react'
-import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItemText, useTheme, ListItemButton } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
-import { Link, useLocation } from 'react-router-dom'
+import * as React from 'react';
+import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItemText, useTheme, ListItemButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar: React.FunctionComponent = () => {
-  const [mobileOpen, setMobileOpen] = React.useState(false)
-  const location = useLocation()
-  const theme = useTheme() // Access theme colors
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const location = useLocation();
+  const theme = useTheme(); // Access theme colors
 
   const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen)
-  }
+    setMobileOpen(!mobileOpen);
+  };
 
   return (
     <>
@@ -18,7 +18,7 @@ const Navbar: React.FunctionComponent = () => {
       <AppBar
         position="sticky"
         sx={{
-          backgroundColor: theme.palette.background.paper, // Dark but not black
+          backgroundColor: theme.palette.background.paper,
           boxShadow: '0px 2px 10px rgba(0, 0, 0, 0.3)',
         }}
       >
@@ -29,7 +29,7 @@ const Navbar: React.FunctionComponent = () => {
 
           {/* Title */}
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 600 }}>
-            Electron Template
+          System Performance Visualizer
           </Typography>
 
           {/* Desktop Navigation Links */}
@@ -57,7 +57,20 @@ const Navbar: React.FunctionComponent = () => {
               transition: 'border-bottom 0.3s',
             }}
           >
-            graphs
+            Graphs
+          </Button>
+          <Button
+            color="inherit"
+            component={Link}
+            to="/reports"
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              fontWeight: location.pathname === '/reports' ? 'bold' : 'normal',
+              borderBottom: location.pathname === '/reports' ? `3px solid ${theme.palette.primary.main}` : 'none',
+              transition: 'border-bottom 0.3s',
+            }}
+          >
+            Reports
           </Button>
         </Toolbar>
       </AppBar>
@@ -65,32 +78,19 @@ const Navbar: React.FunctionComponent = () => {
       {/* Mobile Drawer Menu */}
       <Drawer anchor="left" open={mobileOpen} onClose={handleDrawerToggle}>
         <List sx={{ width: 200 }}>
-          <ListItemButton
-            component={Link}
-            to="/"
-            onClick={handleDrawerToggle}
-            sx={{
-              fontWeight: location.pathname === '/' ? 'bold' : 'normal',
-              color: location.pathname === '/' ? theme.palette.primary.main : 'inherit',
-            }}
-          >
+          <ListItemButton component={Link} to="/" onClick={handleDrawerToggle}>
             <ListItemText primary="Home" />
           </ListItemButton>
-          <ListItemButton
-            component={Link}
-            to="/graphs"
-            onClick={handleDrawerToggle}
-            sx={{
-              fontWeight: location.pathname === '/graphs' ? 'bold' : 'normal',
-              color: location.pathname === '/graphs' ? theme.palette.primary.main : 'inherit',
-            }}
-          >
-            <ListItemText primary="graphs" />
+          <ListItemButton component={Link} to="/graphs" onClick={handleDrawerToggle}>
+            <ListItemText primary="Graphs" />
+          </ListItemButton>
+          <ListItemButton component={Link} to="/reports" onClick={handleDrawerToggle}>
+            <ListItemText primary="Reports" />
           </ListItemButton>
         </List>
       </Drawer>
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
