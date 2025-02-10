@@ -1,5 +1,5 @@
 {
-  "name": "system_serformance",
+  "name": "system_performance",
   "version": "1.0.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
@@ -33,7 +33,6 @@
     "file-saver": "^2.0.5",
     "jspdf": "^2.5.2",
     "jspdf-autotable": "^3.8.4",
-    "moment": "^2.30.1",
     "papaparse": "^5.5.2",
     "re-resizable": "^6.10.3",
     "react-beautiful-dnd": "^13.1.1",
